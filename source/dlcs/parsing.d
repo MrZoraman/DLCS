@@ -14,7 +14,7 @@ public:
     }
 	
 protected:
-    immutable string _script;
+    string _script;
 
     abstract void iterate(int index, char c);
 
@@ -91,12 +91,12 @@ class SpaceParser : SyntaxParserBase
         switch(c)
         {
             case '{':
-                if(inBraces) throw new Exception("fof");
+                if(inBraces) throw new ParseFailException("Braces are already open!", _script, index, openBraceIndex);
                 inBraces = true;
                 openBraceIndex = index;
                 break;
             case '}':
-                if(!inBraces) throw new Exception("fof");
+                if(!inBraces) throw new ParseFailException("Braces don't match!", _script, index);
                 inBraces = false;
                 break;
             case ' ':
@@ -119,7 +119,7 @@ private:
     string _problemSyntax;
 
 public:
-    this(string message, string problemSyntax, int[] parseFailIndexes)
+    this(string message, string problemSyntax, int[] parseFailIndexes...)
     {
         super(message);
         _parseFailIndexes = parseFailIndexes;
