@@ -83,24 +83,24 @@ class SpaceParser : SyntaxParserBase
         super(syntax);
     }
     
-    private bool inBraces = false;
-    private int openBraceIndex = 0;
+    private bool _inBraces = false;
+    private int _openBraceIndex = 0;
     
     protected override void iterate(int index, char c)
     {
         switch(c)
         {
             case '{':
-                if(inBraces) throw new ParseFailException("Braces are already open!", _script, index, openBraceIndex);
-                inBraces = true;
-                openBraceIndex = index;
+                if(_inBraces) throw new ParseFailException("Braces are already open!", _script, index, _openBraceIndex);
+                _inBraces = true;
+                _openBraceIndex = index;
                 break;
             case '}':
-                if(!inBraces) throw new ParseFailException("Braces don't match!", _script, index);
-                inBraces = false;
+                if(!_inBraces) throw new ParseFailException("Braces don't match!", _script, index);
+                _inBraces = false;
                 break;
             case ' ':
-                if(!inBraces)
+                if(!_inBraces)
                 {
                     flush();
                     break;
