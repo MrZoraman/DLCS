@@ -47,3 +47,31 @@ public:
         return _elements;
     }
 }
+
+class ElementParser : SyntaxParserBase
+{
+    public this(string pathElement)
+    {
+        super(pathElement);
+    }
+    
+    protected override void iterate(int index, char c)
+    {
+        switch(c)
+        {
+            case '|':
+                flush();
+                break;
+            default:
+                push(c);
+        }
+    }
+    
+    unittest
+    {
+        ElementParser parser = new ElementParser("some|good|stuff");
+        string[] result = parser.parse();
+        assert(result == ["some", "good", "stuff"]);
+    }
+}
+
