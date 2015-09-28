@@ -8,7 +8,7 @@ private:
     string[] _elements;
 	
 public:
-    this(string script) pure nothrow
+    this(const string script) pure nothrow
 	{
         _script = script;
     }
@@ -16,7 +16,7 @@ public:
 protected:
     string _script;
 
-    abstract void iterate(int index, char c) pure;
+    abstract void iterate(in int index, in char c) pure;
 
     void finished() pure { }
 
@@ -29,7 +29,7 @@ protected:
         }
     }
 
-    void push(char c) pure nothrow
+    void push(in char c) pure nothrow
     {
         _builder ~= c;
     }
@@ -56,7 +56,7 @@ class ElementParser : SyntaxParserBase
         super(pathElement);
     }
     
-    protected override void iterate(int index, char c)
+    protected override void iterate(in int index, in char c)
     {
         switch(c)
         {
@@ -89,7 +89,7 @@ private:
     int _openBraceIndex = 0;
     
 protected:
-    override void iterate(int index, char c)
+    override void iterate(in int index, in char c)
     {
         switch(c)
         {
