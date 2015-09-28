@@ -75,3 +75,39 @@ class ElementParser : SyntaxParserBase
     }
 }
 
+class SpaceParser : SyntaxParserBase
+{
+    public this(string syntax)
+    {
+        super(syntax);
+    }
+    
+    private bool inBraces = false;
+    private int openBraceIndex = 0;
+    
+    protected override void iterate(int index, char c)
+    {
+        switch(c)
+        {
+            case '{':
+                if(inBraces) throw new Exception("fof");
+                inBraces = true;
+                openBraceIndex = index;
+                break;
+            case '}':
+                if(!inBraces) throw new Exception("fof");
+                inBraces = false;
+                break;
+            case ' ':
+                if(!inBraces)
+                {
+                    flush();
+                    break;
+                }
+                goto default;
+            default:
+                push(c);
+        }
+    }
+}
+
