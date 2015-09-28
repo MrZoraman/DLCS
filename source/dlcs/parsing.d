@@ -149,10 +149,10 @@ public:
     void printInfo(File stream)
     {
         stream.writeln(_problemSyntax);
-        stream.writeln(makeProblemArrows('^'));
+        stream.writeln(makeProblemArrows());
     }
     
-    string makeProblemArrows(char arrow)
+    string makeProblemArrows(char arrow = '^')
     {
         char[] result;
         result.length = _problemSyntax.length;
