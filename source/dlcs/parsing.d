@@ -110,6 +110,18 @@ class SpaceParser : SyntaxParserBase
                 push(c);
         }
     }
+    
+    unittest
+    {
+        import std.exception;
+    
+        SpaceParser parser = new SpaceParser("{foomf foomfah} toste");
+        string[] result = parser.parse();
+        assert(result == ["foomf foomfah", "toste"]);
+        
+        parser = new SpaceParser("{I am error{");
+        assertThrown!ParseFailException(parser.parse());
+    }
 }
 
 class ParseFailException : Exception
