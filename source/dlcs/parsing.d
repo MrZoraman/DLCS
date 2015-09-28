@@ -8,7 +8,7 @@ private:
     string[] _elements;
 	
 public:
-    this(immutable string script) pure
+    this(immutable string script) pure nothrow
 	{
         _script = script;
     }
@@ -20,7 +20,7 @@ protected:
 
     void finished() pure { }
 
-    void flush() pure
+    void flush() pure nothrow
     {
         if(_builder.length > 0)
         {
@@ -29,7 +29,7 @@ protected:
         }
     }
 
-    void push(char c) pure
+    void push(char c) pure nothrow
     {
         _builder ~= c;
     }
