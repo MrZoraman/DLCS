@@ -8,7 +8,7 @@ private:
     string[] _elements;
 	
 public:
-    this(immutable string script) pure nothrow
+    this(string script) pure nothrow
 	{
         _script = script;
     }
