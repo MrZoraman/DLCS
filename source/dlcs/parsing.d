@@ -1,4 +1,5 @@
 module dlcs.parsing;
+import std.stdio;
 
 abstract class SyntaxParserBase
 {
@@ -111,3 +112,52 @@ class SpaceParser : SyntaxParserBase
     }
 }
 
+class ParseFailException : Exception
+{
+private:
+    int[] _parseFailIndexes;
+    string _problemSyntax;
+
+public:
+    this(string message, string problemSyntax, int[] parseFailIndexes)
+    {
+        super(message);
+        _parseFailIndexes = parseFailIndexes;
+        _problemSyntax = problemSyntax;
+        
+        import std.algorithm.sorting : sort;
+        sort(_parseFailIndexes);
+    }
+    
+    string problemSyntax() const @property
+    {
+        return _problemSyntax;
+    }
+    
+    void printInfo(File stream)
+    {
+        stream.writeln(_problemSyntax);
+        stream.writeln(makeProblemArrows('^'));
+    }
+    
+    string makeProblemArrows(char arrow)
+    {
+        char[] result;
+        result.length = _problemSyntax.length;
+        
+        int parseFailIndex = 0;
+        for(int ii = 0; ii < _problemSyntax.length; ++ii)
+        {
+            if(_parseFailIndexes[parseFailIndex] == ii)
+            {
+                result ~= arrow;
+                ++parseFailIndex;
+            }
+            else
+            {
+                result ~= ' ';
+            }
+        }
+        return result.idup;
+    }
+}
