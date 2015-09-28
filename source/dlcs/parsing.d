@@ -8,7 +8,7 @@ private:
     string[] _elements;
 	
 public:
-    this(immutable string script)
+    this(immutable string script) pure
 	{
         _script = script;
     }
@@ -16,11 +16,11 @@ public:
 protected:
     string _script;
 
-    abstract void iterate(int index, char c);
+    abstract void iterate(int index, char c) pure;
 
-    void finished() { }
+    void finished() pure { }
 
-    void flush()
+    void flush() pure
     {
         if(_builder.length > 0)
         {
@@ -29,13 +29,13 @@ protected:
         }
     }
 
-    void push(char c)
+    void push(char c) pure
     {
         _builder ~= c;
     }
     
 public:
-    string[] parse()
+    string[] parse() pure
     {
         for(int ii = 0; ii < _script.length; ++ii)
         {
@@ -131,7 +131,7 @@ private:
     string _problemSyntax;
 
 public:
-    this(string message, string problemSyntax, int[] parseFailIndexes...)
+    this(string message, string problemSyntax, int[] parseFailIndexes...) pure
     {
         super(message);
         _parseFailIndexes = parseFailIndexes;
@@ -141,7 +141,7 @@ public:
         sort(_parseFailIndexes);
     }
     
-    string problemSyntax() const @property
+    string problemSyntax() pure const @property
     {
         return _problemSyntax;
     }
@@ -152,7 +152,7 @@ public:
         stream.writeln(makeProblemArrows());
     }
     
-    string makeProblemArrows(char arrow = '^')
+    string makeProblemArrows(char arrow = '^') pure
     {
         char[] result;
         result.length = _problemSyntax.length;
