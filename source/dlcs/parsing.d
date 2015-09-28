@@ -78,15 +78,18 @@ class ElementParser : SyntaxParserBase
 
 class SpaceParser : SyntaxParserBase
 {
-    public this(string syntax)
+public:
+    this(string syntax)
     {
         super(syntax);
     }
     
-    private bool _inBraces = false;
-    private int _openBraceIndex = 0;
+private:
+    bool _inBraces = false;
+    int _openBraceIndex = 0;
     
-    protected override void iterate(int index, char c)
+protected:
+    override void iterate(int index, char c)
     {
         switch(c)
         {
@@ -111,6 +114,11 @@ class SpaceParser : SyntaxParserBase
         }
     }
     
+    override void finished()
+    {
+        if(_inBraces) throw new ParseFailException("Braces are still open!", _script, _openBraceIndex);
+    }
+    
     unittest
     {
         import std.exception;
@@ -121,6 +129,9 @@ class SpaceParser : SyntaxParserBase
         
         parser = new SpaceParser("{I am error{");
         assertThrown!ParseFailException(parser.parse());
+        
+        parser = new SpaceParser("I am{still error");
+        assertThrown!ParseFailException(parser.parse);
     }
 }
 
