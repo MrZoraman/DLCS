@@ -1,7 +1,9 @@
 module dlcs.dlcs;
 
+import dlcs.parsing;
+
 import std.string : strip;
-import std.uni : asLowerCase;
+import std.uni : toLower;
 import std.algorithm : canFind;
 import std.array : split;
 import std.stdio : File;
@@ -18,13 +20,13 @@ public:
 class SyntaxElement(T)
 {
     enum TREE_SPACER = 4;
-    shared static bool _caseSensitive = false;
+    bool _caseSensitive = false;
     
     
     protected T _command = null;
 
 private:
-    string[T] _children;
+    SyntaxElement!T[string] _children;
     
     class SyntaxMatchPackage(T)
     {
@@ -39,7 +41,7 @@ private:
         
         string[] childrenSyntaxPaths = _children.keys;
         
-        int highestInexMatch = 0;
+        int highestIndexMatch = 0;
         SyntaxElement!T bestMatch = null;
         string wildCard;
         
@@ -53,10 +55,10 @@ private:
             {
                 char childChar = _caseSensitive
                     ? childSyntaxPath[index]
-                    : childSyntaxPath[index].asLowerCase;
+                    : cast(char)childSyntaxPath[index].toLower;
                 char pathChar = _caseSensitive
                     ? path[index]
-                    : path[index].asLowerCase;
+                    : cast(char)path[index].toLower;
                     
                 if(childChar == ' ' || pathChar == ' ')
                 {
@@ -68,14 +70,14 @@ private:
                 }
             }
             
-            if(childSyntaxPath.length - 1 > index && childSyntaxPathChars[index + 1] != ' ')
+            if(childSyntaxPath.length - 1 > index && childSyntaxPath[index + 1] != ' ')
             {
                 continue;
             }
             
-            if(index > highestInexMatch)
+            if(index > highestIndexMatch)
             {
-                highestInexMatch = index;
+                highestIndexMatch = index;
                 bestMatch = _children[childSyntaxPath];
             }
         }
@@ -86,15 +88,15 @@ private:
             {
                 bestMatch = _children["*"];
                 string firstWord = getFirstWord(path);
-                highestInexMatch = firstWord.length;
+                highestIndexMatch = firstWord.length;
                 wildCard = firstWord;
             }
         }
         
         SyntaxMatchPackage!T pack = new SyntaxMatchPackage!T();
         pack.bestMatch = bestMatch;
-        pack.matchIndex = matchIndex;
-        pack.wildcard = wildcard;
+        pack.matchIndex = highestIndexMatch;
+        pack.wildCard = wildCard;
         return pack;
     }
     
@@ -103,6 +105,22 @@ private:
         if(!str.canFind(' ')) return str;
         
         return str.split()[0];
+    }
+    
+    void print(File stream, int level)
+    {
+        foreach(path; _children.keys)
+        {
+            printPreSpacing(stream, level);
+            SyntaxElement!T child = _children[path];
+            
+            string commandString = child._command is null
+                ? null
+                : typeof(child._command).stringof;
+                
+            stream.writeln(path, ": ", commandString);
+            child.print(stream, level + 1);
+        }
     }
     
     void printPreSpacing(File stream, int level)
@@ -153,7 +171,7 @@ package:
         {
             CommandResult!T result = new CommandResult!T();
             result.command = _command;
-            result.args = _path.split;
+            result.args = path.split;
             result.preArgs = preArgs;
             return result;
         }
@@ -168,13 +186,14 @@ package:
         
         return bestMatch.matchCommand(path[matchIndex .. $].dup, preArgs);
     }
+
 public:
-    static bool isCaseSensitive()
+    bool isCaseSensitive()
     {
-        return caseSensitive;
+        return _caseSensitive;
     }
     
-    static void setCaseSensitive(bool caseSensitive)
+    void setCaseSensitive(bool caseSensitive)
     {
         _caseSensitive = caseSensitive;
     }
@@ -217,7 +236,7 @@ public:
         _unknownCommand = unknownCommand;
     } 
     
-    T unknownCommand() const @property
+    T unknownCommand() @property
     {
         return _unknownCommand;
     }
@@ -226,19 +245,19 @@ public:
     {
         string unknownCommandString = unknownCommand is null
             ? "null"
-            : unknownCommand.stringof;
+            : typeof(unknownCommand).stringof;
             
         stream.writeln("UNKNOWN_COMMAND: ", unknownCommandString);
         _root.print(stream, 0);
     }
     
-    bool caseSensitive() const @property
+    bool caseSensitive() @property
     {
-        return SyntaxElement.isCaseSensitive;
+        return _root.isCaseSensitive;
     }
     
     void caseSensitive(bool caseSensitive) @property
     {
-        SyntaxElement.setCaseSensitive(caseSensitive);
+        _root.setCaseSensitive(caseSensitive);
     }
 }
