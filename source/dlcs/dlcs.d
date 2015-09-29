@@ -4,13 +4,14 @@ import std.string : strip;
 import std.uni : asLowerCase;
 import std.algorithm : canFind;
 import std.array : split;
+import std.stdio : File;
 
 
 class CommandResult(T)
 {
 public:
     T command;
-    stringp[] preArgs;
+    string[] preArgs;
     string[] args;
 }
 
@@ -143,7 +144,7 @@ package:
         }
     }
     
-    CommandResult matchCommand(string path, string[] preArgs)
+    CommandResult!T matchCommand(string path, string[] preArgs)
     {
         path = path.strip();
         SyntaxMatchPackage!T bestMatchPack = findBestMatch(path);
