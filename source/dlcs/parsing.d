@@ -9,7 +9,7 @@ private:
 	
 public:
     this(const string script) pure nothrow
-	{
+    {
         _script = script;
     }
 	
