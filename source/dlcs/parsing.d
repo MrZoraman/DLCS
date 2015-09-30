@@ -4,7 +4,7 @@ import std.stdio;
 abstract class SyntaxParserBase
 {
 private:
-    char[] _builder;
+    string _builder;
     string[] _elements;
 	
 public:
@@ -14,7 +14,7 @@ public:
     }
 	
 protected:
-    string _script;
+    immutable string _script;
 
     abstract void iterate(in int index, in char c) pure;
 
@@ -24,7 +24,7 @@ protected:
     {
         if(_builder.length > 0)
         {
-            _elements ~= _builder.idup;
+            _elements ~= _builder;
             _builder.length = 0;
         }
     }
@@ -139,7 +139,7 @@ class ParseFailException : Exception
 {
 private:
     int[] _parseFailIndexes;
-    string _problemSyntax;
+    immutable string _problemSyntax;
 
 public:
     this(string message, string problemSyntax, int[] parseFailIndexes...) pure
@@ -165,7 +165,7 @@ public:
     
     string makeProblemArrows(char arrow = '^') pure
     {
-        char[] result;
+        string result;
         result.length = _problemSyntax.length;
         
         int parseFailIndex = 0;
@@ -181,6 +181,6 @@ public:
                 result ~= ' ';
             }
         }
-        return result.idup;
+        return result;
     }
 }
