@@ -8,7 +8,7 @@ import std.algorithm : canFind;
 import std.array : split;
 import std.stdio : File;
 
-debug import std.stdio : writeln;
+//debug import std.stdio : writeln;
 
 
 class CommandResult(T)
@@ -39,8 +39,8 @@ private:
     
     SyntaxMatchPackage!T findBestMatch(string path)
     {
-        debug writeln("Searching for best match...");
-        debug writeln(path);
+        //debug writeln("Searching for best match...");
+        //debug writeln(path);
         
         if(path.length == 0) return null;
         
@@ -53,7 +53,7 @@ private:
         outer:
         foreach(childSyntaxPath; childrenSyntaxPaths)
         {
-            debug writeln("childSyntaxPath: ", childSyntaxPath);
+            //debug writeln("childSyntaxPath: ", childSyntaxPath);
         
             if(childSyntaxPath == "*") continue;
             
