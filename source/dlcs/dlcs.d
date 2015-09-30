@@ -8,6 +8,8 @@ import std.algorithm : canFind;
 import std.array : split;
 import std.stdio : File;
 
+debug import std.stdio : writeln;
+
 
 class CommandResult(T)
 {
@@ -37,6 +39,9 @@ private:
     
     SyntaxMatchPackage!T findBestMatch(string path)
     {
+        debug writeln("Searching for best match...");
+        debug writeln(path);
+        
         if(path.length == 0) return null;
         
         string[] childrenSyntaxPaths = _children.keys;
@@ -48,6 +53,8 @@ private:
         outer:
         foreach(childSyntaxPath; childrenSyntaxPaths)
         {
+            debug writeln("childSyntaxPath: ", childSyntaxPath);
+        
             if(childSyntaxPath == "*") continue;
             
             int index = 0;
@@ -60,7 +67,11 @@ private:
                     ? path[index]
                     : cast(char)path[index].toLower;
                     
-                if(childChar == ' ' || pathChar == ' ')
+                if(childChar == pathChar)
+                {
+                    index++;
+                }
+                else if(childChar == ' ' || pathChar == ' ')
                 {
                     continue outer;
                 }
@@ -223,7 +234,7 @@ public:
             result.command = unknownCommand;
         }
         
-        if(result.args[0] == "")
+        if(result.args.length > 0 && result.args[0] == "")
         {
             result.args = [];
         }
