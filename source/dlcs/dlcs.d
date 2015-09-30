@@ -24,11 +24,10 @@ class SyntaxElement(T)
     enum TREE_SPACER = 4;
     bool _caseSensitive = false;
     
-    
     protected T _command = null;
 
 private:
-    SyntaxElement!T[string] _children;
+    SyntaxElement!T[immutable(string)] _children;
     
     class SyntaxMatchPackage(T)
     {
@@ -44,7 +43,7 @@ private:
         
         if(path.length == 0) return null;
         
-        string[] childrenSyntaxPaths = _children.keys;
+        immutable string[] childrenSyntaxPaths = _children.keys;
         
         int highestIndexMatch = 0;
         SyntaxElement!T bestMatch = null;
@@ -60,10 +59,10 @@ private:
             int index = 0;
             while(index < childSyntaxPath.length && index < path.length)
             {
-                char childChar = _caseSensitive
+                immutable childChar = _caseSensitive
                     ? childSyntaxPath[index]
                     : cast(char)childSyntaxPath[index].toLower;
-                char pathChar = _caseSensitive
+                immutable pathChar = _caseSensitive
                     ? path[index]
                     : cast(char)path[index].toLower;
                     
@@ -143,7 +142,7 @@ private:
     }
 
 package:
-    void addSyntax(string[] path, T command)
+    void addSyntax(immutable string[] path, T command)
     {
         if(path.length == 0)
         {
@@ -153,7 +152,7 @@ package:
         
         ElementParser parser = new ElementParser(path[0]);
         string[] pathElements = parser.parse();
-        string[] subPath = path[1 .. $].dup;
+        immutable string[] subPath = path[1 .. $].idup;
         
         foreach(pathElement; pathElements)
         {
@@ -192,7 +191,7 @@ package:
             preArgs ~= bestMatchPack.wildCard;
         }
         
-        int matchIndex = bestMatchPack.matchIndex;
+        immutable int matchIndex = bestMatchPack.matchIndex;
         SyntaxElement!T bestMatch = bestMatchPack.bestMatch;
         
         return bestMatch.matchCommand(path[matchIndex .. $].dup, preArgs);
@@ -220,7 +219,7 @@ public:
     void registerCommand(string syntax, T command)
     {
         SpaceParser parser = new SpaceParser(syntax);
-        _root.addSyntax(parser.parse(), command);
+        _root.addSyntax(parser.parse().idup, command);
     }
     
     CommandResult!T getCommand(string input)
@@ -254,7 +253,7 @@ public:
     
     void printCommandTree(File stream)
     {
-        string unknownCommandString = unknownCommand is null
+        immutable string unknownCommandString = unknownCommand is null
             ? "null"
             : typeof(unknownCommand).stringof;
             
