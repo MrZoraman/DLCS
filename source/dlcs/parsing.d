@@ -56,7 +56,7 @@ class ElementParser : SyntaxParserBase
         super(pathElement);
     }
     
-    protected override void iterate(in int index, in char c)
+    protected override void iterate(in int index, in char c) pure
     {
         switch(c)
         {
