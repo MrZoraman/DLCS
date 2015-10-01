@@ -145,7 +145,6 @@ private:
     int[] _parseFailIndexes;
     immutable string _problemSyntax;
 
-public:
     this(string message, string problemSyntax, int[] parseFailIndexes...) pure
     {
         super(message);
@@ -156,6 +155,7 @@ public:
         sort(_parseFailIndexes);
     }
 
+public:
     /**
         Gets the command syntax that the parser failed to parse successfully.
         
