@@ -179,7 +179,7 @@ public:
         Params:
             stream = The fhe file to output to.
     */
-    void printInfo(File stream)
+    void printInfo(File stream = stdout)
     {
         stream.writeln(_problemSyntax);
         stream.writeln(makeProblemArrows());
