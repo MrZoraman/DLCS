@@ -1,7 +1,7 @@
 module dlcs.parsing;
 import std.stdio;
 
-abstract class SyntaxParserBase
+package abstract class SyntaxParserBase
 {
 private:
     string _builder;
@@ -49,7 +49,7 @@ public:
     }
 }
 
-class ElementParser : SyntaxParserBase
+package class ElementParser : SyntaxParserBase
 {
     public this(string pathElement)
     {
@@ -76,7 +76,7 @@ class ElementParser : SyntaxParserBase
     }
 }
 
-class SpaceParser : SyntaxParserBase
+package class SpaceParser : SyntaxParserBase
 {
 public:
     this(string syntax)
@@ -135,7 +135,7 @@ protected:
     }
 }
 
-class ParseFailException : Exception
+public class ParseFailException : Exception
 {
 private:
     int[] _parseFailIndexes;

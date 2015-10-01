@@ -11,7 +11,7 @@ import std.stdio : File;
 //debug import std.stdio : writeln;
 
 
-class CommandResult(T)
+public class CommandResult(T)
 {
 public:
     T command;
@@ -19,7 +19,7 @@ public:
     string[] args;
 }
 
-class SyntaxElement(T)
+private class SyntaxElement(T)
 {
     enum TREE_SPACER = 4;
     bool _caseSensitive = false;
@@ -209,7 +209,7 @@ public:
     }
 }
 
-class CommandSystem(T)
+public class CommandSystem(T)
 {
 private:
     SyntaxElement!T _root = new SyntaxElement!T();
