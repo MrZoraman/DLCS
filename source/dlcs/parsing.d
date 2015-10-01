@@ -135,6 +135,10 @@ protected:
     }
 }
 
+
+/**
+    This exception is thrown if the command system experiences a parsing error.
+*/
 public class ParseFailException : Exception
 {
 private:
@@ -151,18 +155,49 @@ public:
         import std.algorithm.sorting : sort;
         sort(_parseFailIndexes);
     }
-    
+
+    /**
+        Gets the command syntax that the parser failed to parse successfully.
+        
+        Returns:
+            The syntax that caused the problem. This will equal what was ever 
+            passed in the dlcs.dlcs.CommandSystem.registerCommand method.
+    */
     string problemSyntax() pure const @property
     {
         return _problemSyntax;
     }
     
+    /**
+        Prints basic info to a file.
+        
+        This is a quick way to dump all of the exception's relevant info into a file.
+        Info includes the syntax that failed to be parsed, the location of the errors
+        and the stack trace. If this method does not format things to your liking, 
+        this class offers the methods to build the error message yourself.
+        
+        Params:
+            stream = The fhe file to output to.
+    */
     void printInfo(File stream)
     {
         stream.writeln(_problemSyntax);
         stream.writeln(makeProblemArrows());
     }
     
+    /**
+        Makes a string that contains arrows that point directly to where the parser failed.
+        
+        If the string that is returned with this method is aligned with the problem syntax,
+        the arrows will poin to the exact location where the parser failed.
+        
+        Params:
+            arrow = The character to point to where the error occured.
+            
+        Returns:
+            The string containing the arrows at the correct location. Arrows are separated
+            by spaces.
+    */
     string makeProblemArrows(char arrow = '^') pure
     {
         string result;
