@@ -27,12 +27,12 @@ class SyntaxElement(T)
     protected T _command = null;
 
 private:
-    SyntaxElement!T[immutable(string)] _children;
+    SyntaxElement[immutable(string)] _children;
     
     class SyntaxMatchPackage(T)
     {
         int matchIndex;
-        SyntaxElement!T bestMatch;
+        SyntaxElement bestMatch;
         string wildCard;
     }
     
@@ -46,7 +46,7 @@ private:
         immutable string[] childrenSyntaxPaths = _children.keys;
         
         int highestIndexMatch = 0;
-        SyntaxElement!T bestMatch = null;
+        SyntaxElement bestMatch = null;
         string wildCard;
         
         outer:
@@ -122,7 +122,7 @@ private:
         foreach(path; _children.keys)
         {
             printPreSpacing(stream, level);
-            SyntaxElement!T child = _children[path];
+            SyntaxElement child = _children[path];
             
             string commandString = child._command is null
                 ? null
@@ -158,7 +158,7 @@ package:
         {
             if(pathElement !in _children)
             {
-                _children[pathElement] = new SyntaxElement!T();
+                _children[pathElement] = new SyntaxElement();
             }
             
             if(path.length > 1)
@@ -192,7 +192,7 @@ package:
         }
         
         immutable int matchIndex = bestMatchPack.matchIndex;
-        SyntaxElement!T bestMatch = bestMatchPack.bestMatch;
+        SyntaxElement bestMatch = bestMatchPack.bestMatch;
         
         return bestMatch.matchCommand(path[matchIndex .. $].dup, preArgs);
     }
