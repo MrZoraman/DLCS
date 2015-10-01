@@ -63,7 +63,3 @@ unittest
     assertThrown!ParseFailException(lcs.registerCommand("{i am also error", badCommand));
     assertThrown!ParseFailException(lcs.registerCommand("}i am bad as well", badCommand));
 }
-
-unittest
-{
-}
