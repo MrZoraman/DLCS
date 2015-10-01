@@ -10,12 +10,33 @@ import std.stdio : File;
 
 //debug import std.stdio : writeln;
 
-
+/**
+    A package of relevant data returend by the command system given user input.
+    
+    This class acts as a container for the command itself, the preArgs and the
+    args. This way, the user of the library can use this data however they want,
+    allowing the library to be more flexible.
+*/
 public class CommandResult(T)
 {
 public:
+    /**
+        The command matched to the syntax by the command system.
+        
+        If no command was found, this will be null.
+    */
     T command;
+    
+    /**
+        The arguments that were read from the wildcards specified
+        in the syntax.
+    */
     string[] preArgs;
+    
+    /**
+        The arguments that were trailing after the input after
+        the best match was found and returned.
+    */
     string[] args;
 }
 
@@ -209,6 +230,15 @@ public:
     }
 }
 
+/**
+    Primary class for the library.
+    
+    Commands are submitted to the command system, and when given
+    user input, it will try to produce the correct cooresponding
+    command object.
+    
+    The template type must be a reference type!
+*/
 public class CommandSystem(T)
 {
 private:
@@ -216,12 +246,39 @@ private:
     T _unknownCommand = null;
     
 public:
+    /**
+        registers a command to the command system.
+        
+        Params:
+            syntax = This is the pattern that the command system
+                will use to match the command with the user input.
+                See the readme.md for examples. Command syntaxes
+                can have various predefined arguments to make up
+                complex command trees. To have the parser ignore spaces,
+                put the arguments in curly braces. the parser will make
+                sure the curly braces are used properly as to avoid
+                mistakes made by the programmer. To have the command
+                tree branch off into multiple aliases, use the rod symbol
+                (|) to specify multiple command/parameter aliases.
+                Wildcards can be specified for parameters by using a
+                '*' symbol.
+            command = The command that will be returned if user input 
+                matches the specified syntax.
+    */
     void registerCommand(string syntax, T command)
     {
         SpaceParser parser = new SpaceParser(syntax);
         _root.addSyntax(parser.parse().idup, command);
     }
     
+    /**
+        Matches user input to a given command and returns the result.
+        
+        Params:
+            input = The user input. The command system will find the best
+                match given the various syntaxes specified in the 
+                registerCommand method.
+    */
     CommandResult!T getCommand(string input)
     {
         CommandResult!T result = _root.matchCommand(input, []);
@@ -241,16 +298,52 @@ public:
         return result;
     }
     
+    /**
+        Sets the command to be executed if the command system fails to find
+        a command match.
+        
+        If the command system fails to find a match, this command will be
+        executed. This can als,o be seen as the root node command, so if the
+        user were to input a 'command' that is totally empty, this command
+        will be executed. This is assuming an empty string wasn't registered
+        as one of the commands.
+        
+        The arguments will be filled with whatever the user typed in.
+        
+        Params:
+            unknownCommand = the command to execute when the command system
+                cannot find a suitable command to execute.
+    */
     void unknownCommand(T unknownCommand) @property
     {
         _unknownCommand = unknownCommand;
     } 
     
+    /**
+        Gets the unknown command.
+        
+        This returns the unknown command, or null if no unknown command has
+        been set.
+        
+        Returns:
+            The unknown command.
+    */
     T unknownCommand() @property
     {
         return _unknownCommand;
     }
     
+    /**
+        Prints the command tree to a file.
+        
+        This prints out the structure of the command tree. It shows what
+        the command system sees, so you can get an idea on the behavior
+        of the command system when the user types in commands. This
+        is intended to be a useful debugging tool.
+        
+        Params:
+            stream = The file to output to.
+    */
     void printCommandTree(File stream)
     {
         immutable string unknownCommandString = unknownCommand is null
@@ -261,11 +354,30 @@ public:
         _root.print(stream, 0);
     }
     
+    /**
+        Checks if the command system is case sensitive or not.
+        
+        Returns:
+            True if it is case sensitive, false if it is not case sensitive.
+    */
     bool caseSensitive() @property
     {
         return _root.isCaseSensitive;
     }
     
+    /**
+        Sets if the command system is case sensitive or not.
+        
+        When the command system is not case sensitive, case will be ignored
+        when matching the command. Arguments and preArguments will retain their
+        case.
+        
+        Case sensitivity is set to false by default.
+        
+        Params:
+            caseSensitive = If true, the command system will be case sensitive.
+                If false, then it will not be.
+    */
     void caseSensitive(bool caseSensitive) @property
     {
         _root.setCaseSensitive(caseSensitive);
